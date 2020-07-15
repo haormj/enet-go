@@ -29,12 +29,17 @@ func main() {
 				log.Println("connect")
 			case enet.ENET_EVENT_TYPE_RECEIVE:
 				log.Println("receive")
+				buffPtr := event.GetPacket().GetData().Swigcptr()
+				buffLen := event.GetPacket().GetDataLength()
+				data := enet.UintptrToBytes(buffPtr, int(buffLen))
+				log.Println(buffLen, " ", string(data))
 			case enet.ENET_EVENT_TYPE_DISCONNECT:
 				log.Println("disconnect")
 			default:
-				log.Println("hello")
+				log.Println("other enet event")
 			}
 		}
+		enet.DeleteENetEvent(event)
 	}
 
 }

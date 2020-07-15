@@ -22,6 +22,11 @@ func BytesToUintptr(b []byte) (uintptr, int) {
 	return header.Data, header.Len
 }
 
+func Uint32BytesToUintptr(u []uint32) (uintptr, int) {
+	header := (*reflect.SliceHeader)(unsafe.Pointer(&u))
+	return header.Data, header.Len
+}
+
 func UintptrToBytes(ptr uintptr, length int) []byte {
 	var b []byte
 	header := (*reflect.SliceHeader)(unsafe.Pointer(&b))

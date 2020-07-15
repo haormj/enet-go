@@ -35,8 +35,15 @@ func main() {
 		for {
 			buff := []byte("hello world, I'm client")
 			buffPtr, buffLen := enet.BytesToUintptr(buff)
-			packet := enet.Enet_packet_create(buffPtr, int64(buffLen),
-				enet.NewEnetUint32(uint32(enet.ENET_PACKET_FLAG_RELIABLE)))
+			// packet := enet.Enet_packet_create(buffPtr, int64(buffLen),
+			// 	enet.NewEnetUint32(uint32(enet.ENET_PACKET_FLAG_RELIABLE)))
+			packet := enet.NewENetPacket()
+			packet.SetData(enet.SwigcptrEnet_uint8(buffPtr))
+			packet.SetDataLength(int64(buffLen))
+
+			flags := []uint32{uint32(enet.ENET_PACKET_FLAG_RELIABLE)}
+			flagsPtr, _ := enet.Uint32BytesToUintptr(flags)
+			packet.SetFlags(enet.SwigcptrEnet_uint32(flagsPtr))
 			if packet == nil {
 				log.Println("enet packet create failed")
 				continue
@@ -44,7 +51,7 @@ func main() {
 			if ret := enet.Enet_peer_send(peer, enet.NewEnetUint8(0), packet); ret != 0 {
 				log.Println("enet peer send failed")
 			}
-			enet.Enet_packet_destroy(packet)
+			enet.DeleteENetPacket(packet)
 			time.Sleep(time.Second)
 		}
 	}()
